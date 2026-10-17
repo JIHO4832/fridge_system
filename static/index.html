@@ -64,8 +64,8 @@ ul{list-style:none;margin:0;padding:0}
 .rc{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh)}
 .rc h3{margin:0;font-size:19px;letter-spacing:-.02em}
 .meta{font-size:14px;color:var(--sub);margin:2px 0 8px}
-.prog{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin:8px 0}
-.prog i{display:block;height:100%;border-radius:9px;background:var(--ac);width:var(--w);animation:grow .9s cubic-bezier(.2,.8,.2,1)}
+.prog{height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;border-radius:99px;background:var(--ac);width:var(--w);animation:grow .9s cubic-bezier(.2,.8,.2,1)}
 @keyframes grow{from{width:0}}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .tg{font-size:14px;padding:2px 11px;border-radius:99px;border:1px solid var(--ln)}
@@ -105,7 +105,7 @@ main{padding:96px 18px 150px}
 .dk button{position:relative;display:grid;justify-items:center;gap:2px;min-width:78px;padding:9px 12px;border:0;border-radius:22px;background:none;color:var(--sub);font:inherit;font-size:12.5px;cursor:pointer;transition:background .35s,color .35s,transform .2s}
 .dk button[aria-selected="true"]{background:var(--ac2);color:var(--ac)}.dk button:active{transform:scale(.94)}
 .dk svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.badge{position:absolute;top:3px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e5484d;color:#fff;font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center}
+.badge{position:absolute;top:3px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#e5484d;color:#fff;font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center}
 .tw{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))}
 .sec2{font-weight:500;margin-bottom:12px}
 .sws{display:flex;gap:16px;flex-wrap:wrap}
@@ -225,7 +225,7 @@ main{padding:96px 18px 150px}
 <div class="dock noprint"><nav class="dk" role="tablist"><button role="tab" id="d1" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v1.5M9.5 13v3"/></svg><i class="badge" id="bg" hidden></i><span class="nn">식재료</span><span class="ww">홈</span></button><button role="tab" id="d2" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M17 3c-2 2-2 6 0 8v10M7 11v10"/></svg><span>레시피</span></button><button role="tab" id="d4" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></svg><span>설정</span></button></nav></div>
 <div class="tw"><div class="toast" id="toast" role="status"></div></div>
 
-<!-- AI 음성 비서 플로팅 UI (제미나이 스파클 로고 적용) -->
+<!-- AI 음성 비서 플로팅 UI -->
 <div id="ai-chat-box">
     <div class="chat-header">
         <span>✨ 제미나이 AI 비서</span>
@@ -236,14 +236,13 @@ main{padding:96px 18px 150px}
     </div>
 </div>
 <button id="ai-widget-btn" class="noprint" onclick="startVoiceRecognition()" title="제미나이 AI 호출하기">
-    <!-- Gemini Sparkle SVG Icon -->
     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
     </svg>
 </button>
 
 <script>
-// --- QR 디코더 및 핵심 로직 ---
+// --- QR 디코더 스크립트 ---
 (function(G){
 'use strict';
 const ECT={1:{L:[7,1],M:[10,1],Q:[13,1],H:[17,1]},2:{L:[10,1],M:[16,1],Q:[22,1],H:[28,1]},3:{L:[15,1],M:[26,1],Q:[18,2],H:[22,2]},4:{L:[20,1],M:[18,2],Q:[26,2],H:[16,4]}};
@@ -445,7 +444,7 @@ G.qrDecode=qrDecode;
 </script>
 
 <script>
-// --- 식재료, 레시피, 대시보드 인터랙션 전체 로직 ---
+// --- 식재료 & 레시피 데이터 ---
 const F={계란:[25,'냉장'],우유:[10,'냉장'],두부:[10,'냉장'],김치:[90,'냉장'],대파:[14,'냉장'],당근:[21,'냉장'],양배추:[14,'냉장'],애호박:[7,'냉장'],버섯:[7,'냉장'],시금치:[4,'냉장'],돼지고기:[3,'냉장'],소고기:[3,'냉장'],닭고기:[2,'냉장'],베이컨:[14,'냉장'],어묵:[10,'냉장'],치즈:[30,'냉장'],양파:[30,'실온'],감자:[30,'실온'],마늘:[30,'실온'],식빵:[5,'실온'],참치캔:[730,'실온'],라면:[180,'실온'],파스타면:[365,'실온'],밥:[30,'냉동']};
 const R=[
 {n:'계란말이',t:15,i:['계란','대파'],o:['당근'],s:['계란을 풀고 잘게 썬 대파와 당근, 소금 한 꼬집을 섞어요.','약불로 달군 팬에 기름을 두르고 계란물을 얇게 부어요.','살짝 익으면 돌돌 말고, 남은 계란물을 부어 반복해요.','한 김 식힌 뒤 썰어 내요.']},
@@ -466,6 +465,9 @@ const R=[
 ];
 
 const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
+const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
+const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
+
 const em=n=>EMO[n]||'🍽️';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -482,7 +484,7 @@ try{items=JSON.parse(localStorage.getItem('fridge')||'[]');facing=localStorage.g
 const save=()=>{try{localStorage.setItem('fridge',JSON.stringify(items))}catch(e){}};
 
 let tt;
-function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+function toast(h){const t=$('#toast');if(!t)return;t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
 
 function addFood(name){
   const f=F[name];if(!f)return false;
@@ -499,7 +501,7 @@ const bdInput=$('#bd');if(bdInput) bdInput.value=fmt(today());
 function auto(){
   const nmInput=$('#nm');const exInput=$('#ex');const htInput=$('#ht');
   if(!nmInput || !exInput) return;
-  const f=F[nmInput.value.trim()],b=bdInput.value;
+  const f=F[nmInput.value.trim()],b=bdInput ? bdInput.value : fmt(today());
   if(f&&b&&!manual){
     exInput.value=addDays(b,f[0]);
     if(htInput) htInput.textContent='자동 계산: '+f[1]+' 보관 시 구매 후 약 '+f[0]+'일.';
@@ -513,11 +515,11 @@ const addBtn=$('#add');
 if(addBtn){
   addBtn.onclick=()=>{
     const name=$('#nm').value.trim(),buy=$('#bd').value,exp=$('#ex').value;
-    if(!name){$('#ht').textContent='식재료 이름을 입력해 주세요.';$('#nm').focus();return}
-    if(!exp){$('#ht').textContent='소비기한을 입력해 주세요.';$('#ex').focus();return}
+    if(!name){if($('#ht'))$('#ht').textContent='식재료 이름을 입력해 주세요.';if($('#nm'))$('#nm').focus();return}
+    if(!exp){if($('#ht'))$('#ht').textContent='소비기한을 입력해 주세요.';if($('#ex'))$('#ex').focus();return}
     const id=Date.now()+Math.random();
     items.push({id,name,buy,exp,st:(F[name]||[0,'직접 입력'])[1]});newId=id;save();
-    $('#nm').value='';$('#ex').value='';manual=false;render();
+    if($('#nm'))$('#nm').value='';if($('#ex'))$('#ex').value='';manual=false;render();
     toast('<span>'+em(name)+'</span><span>'+esc(name)+' 추가됨</span>');
   };
 }
@@ -530,7 +532,7 @@ function render(){
   sm.innerHTML=`<span class="pill p1">만료 ${c1}</span><span class="pill p2">임박 ${c2}</span><span class="pill p3">여유 ${c3}</span>`;
   if(!items.length){ls.innerHTML='<li class="empty">냉장고가 비어 있어요. 바코드를 비추거나 직접 추가해 보세요.</li>';renderRecipes();return;}
   ls.innerHTML=items.map(it=>{
-    const d=left(it.exp),cl=cls(it.exp),l=lab(d);
+    const d=left(it.exp),cl=cls(d),l=lab(d);
     return `<li class="it c${cl} ${it.id===newId?'new':''}" data-id="${it.id}"><div class="em">${em(it.name)}</div><div class="bd"><b>${esc(it.name)}</b><span>${it.st} · 구매 ${it.buy} · 기한 ${it.exp}</span></div><div class="dd">${l}</div><button class="del" aria-label="삭제">✕</button></li>`;
   }).join('');
   newId=null;
@@ -538,7 +540,7 @@ function render(){
     btn.onclick=e=>{
       const li=e.target.closest('.it'),id=Number(li.dataset.id);
       li.classList.add('out');
-      setTimeout(()=>{items=items.filter(x=>x.id!==id);save();render()},2800);
+      setTimeout(()=>{items=items.filter(x=>x.id!==id);save();render()},280);
     };
   });
   renderRecipes();dateBadgeCount();
@@ -595,8 +597,9 @@ async function startCam(){
   if(stream)return;
   try{
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});
-    vd.srcObject=stream;await vd.play();
-    vf.classList.add('on');scanning=true;
+    if(vd) { vd.srcObject=stream; await vd.play(); }
+    if(vf) vf.classList.add('on');
+    scanning=true;
     if(st) st.textContent='카메라를 QR 코드에 비춰 주세요.';
     scanLoop();
   }catch(e){if(st) st.textContent='카메라를 사용할 수 없습니다.';}
@@ -604,11 +607,12 @@ async function startCam(){
 function stopCam(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
   if(vd) vd.srcObject=null;
-  if(vf) vf.classList.remove('on');scanning=false;
+  if(vf) vf.classList.remove('on');
+  scanning=false;
   clearTimeout(camTimer);
 }
 function scanLoop(){
-  if(!scanning)return;
+  if(!scanning||!vd)return;
   try{
     const canvas=document.createElement('canvas');canvas.width=vd.videoWidth||640;canvas.height=vd.videoHeight||480;
     const ctx=canvas.getContext('2d');ctx.drawImage(vd,0,0,canvas.width,canvas.height);
@@ -641,10 +645,89 @@ if($('#img')) $('#img').onchange=e=>{
   img.src=url;
 };
 
-// 설정 및 초기화
+// --- 상단 헤더 시계 및 테마/설정 기능 복구 ---
+function updateClock(){
+    const now = new Date();
+    const ck=$('#ck'), dt=$('#dt');
+    if(ck) ck.innerText = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    if(dt) dt.innerText = (now.getMonth()+1) + '월 ' + now.getDate() + '일';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// 냉장고 이름 변경
+const fnSpan=$('#fn'), snInput=$('#sn');
+if(snInput && fnSpan){
+    snInput.value = localStorage.getItem('fridgeName') || '우리집 냉장고';
+    fnSpan.textContent = snInput.value;
+    snInput.oninput = () => {
+        fnSpan.textContent = snInput.value || '우리집 냉장고';
+        localStorage.setItem('fridgeName', snInput.value);
+    };
+}
+
+// 테마 스와치 및 다크모드 설정
+const THEMES = [
+  {id:'g', c:'#0b8a63', ac2:'#e2f3ec'},
+  {id:'b', c:'#2563eb', ac2:'#eff6ff'},
+  {id:'p', c:'#7c3aed', ac2:'#f5f3ff'},
+  {id:'o', c:'#ea580c', ac2:'#fff7ed'}
+];
+const sws=$('#sws');
+if(sws){
+    sws.innerHTML = THEMES.map(t => `<button class="swb" data-t="${t.id}" aria-pressed="${(localStorage.getItem('fridgeTheme')||'g')===t.id}"><i style="--c:${t.c}"></i></button>`).join('');
+    sws.onclick = e => {
+        const btn = e.target.closest('.swb');if(!btn)return;
+        const tid = btn.dataset.t;
+        const th = THEMES.find(x=>x.id===tid);
+        if(th){
+            document.documentElement.style.setProperty('--ac', th.c);
+            document.documentElement.style.setProperty('--ac2', th.ac2);
+            localStorage.setItem('fridgeTheme', tid);
+            sws.querySelectorAll('.swb').forEach(b=>b.setAttribute('aria-pressed', b===btn));
+        }
+    };
+}
+
+// 화면 모드 (자동 / 라이트 / 다크)
+const seg=$('#seg');
+if(seg){
+    const mode = localStorage.getItem('fridgeMode') || 'auto';
+    seg.querySelectorAll('button').forEach(b=>{
+        b.setAttribute('aria-pressed', b.dataset.m === mode);
+        b.onclick = () => {
+            seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', false));
+            b.setAttribute('aria-pressed', true);
+            localStorage.setItem('fridgeMode', b.dataset.m);
+            if(b.dataset.m === 'auto') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', b.dataset.m);
+        };
+    });
+}
+
+// 화면 항상 켜두기 (WakeLock)
+const wk=$('#wk');
+if(wk){
+    wk.onclick = async () => {
+        const ch = wk.getAttribute('aria-checked') === 'true';
+        if(!ch){
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                wk.setAttribute('aria-checked', 'true');
+                toast('화면 항상 켜두기가 활성화되었습니다.');
+            } catch(e) { toast('이 브라우저에서는 사용할 수 없습니다.'); }
+        } else {
+            if(wakeLock){ wakeLock.release(); wakeLock = null; }
+            wk.setAttribute('aria-checked', 'false');
+            toast('화면 항상 켜두기가 해제되었습니다.');
+        }
+    };
+}
+
+// 초기화
 if($('#rs')) $('#rs').onclick=()=>{if(confirm('모든 식재료를 삭제하시겠어요?')){items=[];save();render();toast('전체 삭제되었습니다.');}};
 
-// --- AI 음성 비서 기능 연동 ---
+// --- 제미나이 AI 음성 비서 기능 연동 ---
 function toggleChatBox(show) {
     const chatBox = document.getElementById('ai-chat-box');
     if(chatBox) chatBox.classList.toggle('active', show);
