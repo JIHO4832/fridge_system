@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>냉장고 소비기한 노트</title>
-<!-- 고성능 바코드/QR 인식 라이브러리 -->
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
 :root{--bg:#f1f4f1;--sf:#fff;--ink:#0e1a15;--sub:#62736b;--ln:#dde5e0;--ac:#0b8a63;--acf:#fff;--ac2:#e2f3ec;--r1:#9b1c1c;--r1b:#fde8e8;--r2:#a8480a;--r2b:#fdeedb;--r3:#0b7a58;--r3b:#e0f2ea;--sh:0 1px 2px rgba(14,26,21,.05),0 14px 34px -16px rgba(14,26,21,.22);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1411;--sf:#121f1a;--ink:#e8f2ed;--sub:#8fa69c;--ln:#233630;--ac:#4fd1a1;--acf:#06130e;--ac2:#14302a;--r1:#ff9b9b;--r1b:#3d1d1d;--r2:#ffc27a;--r2b:#3b2a14;--r3:#7fe0b9;--r3b:#173a2e;--sh:0 1px 2px rgba(0,0,0,.3),0 14px 34px -16px rgba(0,0,0,.6);color-scheme:dark}}
@@ -13,18 +11,31 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
-main{max-width:680px;margin:0 auto;padding:96px 18px 150px}
+main{max-width:680px;margin:0 auto;padding:24px 18px 56px}
+.hd{display:flex;gap:14px;align-items:center;margin-bottom:22px}
+.lg{width:52px;height:52px;border-radius:16px;background:var(--ac);color:var(--acf);display:grid;place-items:center;flex:none}
+h1{font-size:28px;line-height:1.2;margin:0;letter-spacing:-.03em;font-weight:700}
+.lead{color:var(--sub);margin:4px 0 0;font-size:15px}
+.tabs{position:relative;display:flex;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:4px;margin:0 0 20px;box-shadow:var(--sh)}
+#ind{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:12px;background:var(--ac);transition:transform .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1)}
+.tabs button{position:relative;z-index:1;flex:1;border:0;background:none;color:var(--sub);font:inherit;font-weight:500;font-size:15px;padding:12px 6px;border-radius:12px;cursor:pointer;transition:color .3s}
+.tabs button[aria-selected="true"]{color:var(--acf)}
+.ww{display:none}
 button:focus-visible,input:focus-visible,summary:focus-visible,label.btn:focus-within{outline:3px solid var(--ac);outline-offset:2px}
 section.in{animation:in .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes in{from{opacity:0;transform:translateY(10px)}}
-.card{background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:18px;margin-bottom:18px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05)}
-.vf{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#0b1511;margin-bottom:14px;transition:box-shadow .3s;display:flex;align-items:center;justify-content:center}
-#reader{width:100%;height:100%;object-fit:cover}
-#reader video{width:100%!important;height:100%!important;object-fit:cover!important}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:18px;margin-bottom:18px;box-shadow:var(--sh)}
+.vf{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#0b1511;margin-bottom:14px;transition:box-shadow .3s}
 .vf.hit{box-shadow:inset 0 0 0 5px var(--ac)}
-.ph{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;color:#9fb5ab;font-size:15px;pointer-events:none;z-index:2}
-.ph b{font-size:34px}
-.vf.on .ph{display:none}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
+.on video{opacity:1}video.mir{transform:scaleX(-1)}
+.ph{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;color:#9fb5ab;font-size:15px;transition:opacity .5s}.ph b{font-size:34px}.on .ph{opacity:0}
+.c{position:absolute;width:38px;height:38px;border:3px solid rgba(255,255,255,.9);transition:border-color .3s}
+.hit .c{border-color:var(--ac)}
+.tl{top:18px;left:18px;border-right:0;border-bottom:0;border-radius:14px 0 0 0}.tr{top:18px;right:18px;border-left:0;border-bottom:0;border-radius:0 14px 0 0}.bl{bottom:18px;left:18px;border-right:0;border-top:0;border-radius:0 0 0 14px}.br{bottom:18px;right:18px;border-left:0;border-top:0;border-radius:0 0 14px 0}
+.ln{position:absolute;left:10%;right:10%;top:14%;height:2px;border-radius:2px;background:var(--ac);box-shadow:0 0 14px 2px var(--ac);opacity:0;transition:opacity .4s}
+.on .ln{opacity:1;animation:sweep 2.6s ease-in-out infinite}
+@keyframes sweep{0%,100%{top:14%}50%{top:84%}}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{font:inherit;font-weight:500;font-size:16px;border:1px solid transparent;border-radius:14px;padding:12px 18px;background:var(--ac);color:var(--acf);cursor:pointer;text-align:center;white-space:nowrap;transition:transform .2s,opacity .2s}
 .btn:active{transform:scale(.96)}.btn.ghost{background:none;color:var(--ac);border-color:var(--ln)}
@@ -39,7 +50,7 @@ input[type=text],input[type=date]{width:100%;font:inherit;color:var(--ink);backg
 .pill{padding:4px 12px;border-radius:99px;font-size:14px}
 .p1{background:var(--r1b);color:var(--r1)}.p2{background:var(--r2b);color:var(--r2)}.p3{background:var(--r3b);color:var(--r3)}
 ul{list-style:none;margin:0;padding:0}
-.it{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05);transition:opacity .28s,transform .28s}
+.it{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--sh);transition:opacity .28s,transform .28s}
 .it.out{opacity:0;transform:translateX(28px)}
 .it.new{animation:pop .6s cubic-bezier(.2,.9,.3,1.15)}
 @keyframes pop{from{opacity:0;transform:translateY(-14px) scale(.95)}}
@@ -47,12 +58,10 @@ ul{list-style:none;margin:0;padding:0}
 .bd{flex:1;min-width:0}.bd b{display:block;font-weight:600}.bd span{font-size:13px;color:var(--sub)}
 .dd{font-weight:700;font-size:15px;border-radius:99px;padding:4px 12px;white-space:nowrap}
 .c1 .dd{background:var(--r1b);color:var(--r1)}.c2 .dd{background:var(--r2b);color:var(--r2)}.c3 .dd{background:var(--r3b);color:var(--r3)}
-.del{border:0;background:none;color:var(--sub);cursor:pointer;font:inherit;padding:8px 6px;transition:color .2s}
-.del:hover{color:var(--r1)}
+.del{border:0;background:none;color:var(--sub);cursor:pointer;font:inherit;padding:8px 6px}
 .empty{text-align:center;color:var(--sub);padding:28px 8px}
 .bar select{width:100%;font:inherit;color:var(--ink);background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px;margin-bottom:14px}
-.rc{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .25s}
-.rc:hover{transform:translateY(-2px)}
+.rc{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh)}
 .rc h3{margin:0;font-size:19px;letter-spacing:-.02em}
 .meta{font-size:14px;color:var(--sub);margin:2px 0 8px}
 .prog{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin:8px 0}
@@ -61,24 +70,31 @@ ul{list-style:none;margin:0;padding:0}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .tg{font-size:14px;padding:2px 11px;border-radius:99px;border:1px solid var(--ln)}
 .tg.have{background:var(--r3b);color:var(--r3);border-color:transparent}.tg.soon{background:var(--r2b);color:var(--r2);border-color:transparent}.tg.miss{color:var(--sub);border-style:dashed}
-summary{cursor:pointer;color:var(--ac);padding:6px 0;transition:opacity .2s}
-summary:hover{opacity:0.8}
+summary{cursor:pointer;color:var(--ac);padding:6px 0}
 ol{margin:6px 0 0;padding-left:22px}
-.tw{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(108px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.bc{background:var(--sf);border:1px dashed var(--sub);border-radius:18px;padding:12px;font:inherit;color:var(--ink);cursor:pointer;text-align:center;transition:transform .25s}
+.bc:active{transform:scale(.95)}
+.qr{background:#fff;border-radius:10px;padding:7px}.qr svg{display:block;width:100%;height:auto}
+.bc b{display:block;margin-top:8px}.bc small{color:var(--sub);font-size:13px}
+.tw{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(22px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
 .toast{display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:99px;box-shadow:0 18px 40px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(24px) scale(.96);transition:opacity .4s,transform .5s cubic-bezier(.2,.9,.3,1.1)}
 .toast.show{opacity:1;transform:none}
 footer{font-size:13px;color:var(--sub);margin-top:28px}
 [hidden]{display:none!important}
 @media(min-width:980px){
- main{max-width:1120px}
- .home{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:start}
- main[data-v="1"] #p1,main[data-v="1"] #p2,main[data-v="2"] #p1,main[data-v="2"] #p2{display:block!important}
- .nn,#d2{display:none}.ww{display:inline}
+ main{max-width:1120px}
+ .home{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:start}
+ main[data-v="1"] #p1,main[data-v="1"] #p2,main[data-v="2"] #p1,main[data-v="2"] #p2{display:block!important}
+ .nn,#d2{display:none}.ww{display:inline}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.noprint{display:none!important}body{background:#fff}main{max-width:none;padding:0}.sg{grid-template-columns:repeat(4,1fr)}.bc{break-inside:avoid;border-color:#888;color:#000}.bc small{color:#333}}
 
 body{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;overscroll-behavior:none}
 input{user-select:text;-webkit-user-select:text}
+main{padding:96px 18px 150px}
+.card,.it,.rc{box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05)}
 .sb{position:fixed;top:0;left:0;right:0;z-index:15;padding:calc(10px + env(safe-area-inset-top,0px)) 22px 10px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--ln)}
 .sb .l{display:flex;gap:10px;align-items:center;font-weight:600;min-width:0}.sb .l svg{width:24px;height:24px;flex:none;color:var(--ac);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.sb .l span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ck{text-align:center;line-height:1.15}#ck{display:block;font-size:27px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}#dt{font-size:12px;color:var(--sub)}
@@ -90,6 +106,7 @@ input{user-select:text;-webkit-user-select:text}
 .dk button[aria-selected="true"]{background:var(--ac2);color:var(--ac)}.dk button:active{transform:scale(.94)}
 .dk svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .badge{position:absolute;top:3px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e5484d;color:#fff;font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center}
+.tw{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))}
 .sec2{font-weight:500;margin-bottom:12px}
 .sws{display:flex;gap:16px;flex-wrap:wrap}
 .swb{display:grid;gap:8px;justify-items:center;background:none;border:0;color:var(--sub);font:inherit;font-size:13px;cursor:pointer}
@@ -102,31 +119,6 @@ input{user-select:text;-webkit-user-select:text}
 .sw{width:58px;height:34px;border-radius:99px;border:0;background:var(--ln);position:relative;cursor:pointer;flex:none;transition:background .3s}
 .sw i{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .4s cubic-bezier(.2,.9,.3,1.2)}
 .sw[aria-checked="true"]{background:var(--ac)}.sw[aria-checked="true"] i{transform:translateX(24px)}
-
-/* Gemini AI Widget */
-#ai-widget-btn {
-    position: fixed; bottom: 90px; right: 24px; width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570); color: #ffffff; border: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000;
-    transition: transform .3s cubic-bezier(.2,.9,.3,1.2);
-}
-#ai-widget-btn:hover { transform: scale(1.1); }
-#ai-widget-btn.listening { background: #e5484d; animation: pulse 1.2s infinite; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(229, 72, 77, 0); } 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); } }
-#ai-chat-box {
-    position: fixed; bottom: 160px; right: 24px; width: 320px; background: var(--sf); border-radius: 18px;
-    box-shadow: var(--sh); border: 1px solid var(--ln); padding: 16px; display: none; flex-direction: column; gap: 10px; z-index: 1000;
-    animation: fadeInScale .3s cubic-bezier(.2,.9,.3,1.1);
-}
-@keyframes fadeInScale { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: none; } }
-#ai-chat-box.active { display: flex; }
-.chat-header { font-weight: 600; font-size: 15px; color: var(--ac); display: flex; justify-content: space-between; align-items: center; }
-.chat-close-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--sub); }
-.chat-content { font-size: 14px; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-.msg { padding: 8px 12px; border-radius: 12px; max-width: 90%; word-break: break-word; }
-.msg.user { background: var(--ac2); color: var(--ac); align-self: flex-end; }
-.msg.ai { background: var(--bg); color: var(--ink); align-self: flex-start; }
-
 @media(max-width:560px){.sb .r .chip:last-child{display:none}.sb{padding-left:14px;padding-right:14px}.dk button{min-width:64px;padding:9px 8px}}
 </style>
 </head>
@@ -135,79 +127,249 @@ input{user-select:text;-webkit-user-select:text}
 <header class="sb noprint"><div class="l"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v1.5M9.5 13v3"/></svg><span id="fn">우리집 냉장고</span></div><div class="ck"><span id="ck">--:--</span><span id="dt"></span></div><div class="r"><span class="chip">냉장 <b>3°C</b></span><span class="chip">냉동 <b>-18°C</b></span></div></header>
 
 <div class="home noprint">
-<section id="p1" class="in">
-  <div class="card" id="scan">
-    <div class="vf" id="vf">
-      <div id="reader"></div>
-      <div class="ph"><b>📷</b><span>카메라 버튼을 눌러 바코드를 스캔하세요</span></div>
-    </div>
-    <div class="row">
-      <button class="btn" id="cam">카메라 켜기</button>
-      <button class="btn ghost" id="flip">카메라 전환</button>
-      <label class="btn ghost" for="img">사진으로 인식</label>
-      <input id="img" type="file" accept="image/*" hidden>
-    </div>
-    <p class="hint" id="st">첨부 파일에 명시된 24종 식재료 바코드/QR 코드를 비추면 자동 등록됩니다.</p>
-  </div>
-  <details class="card"><summary>직접 추가하기</summary>
-    <div class="form">
-      <div class="w"><label for="nm">식재료 이름</label><input id="nm" type="text" list="fl" placeholder="예: 계란, 두부, 김치" autocomplete="off"><datalist id="fl"></datalist></div>
-      <div><label for="bd">구매일</label><input id="bd" type="date"></div>
-      <div><label for="ex">소비기한</label><input id="ex" type="date"></div>
-      <div class="w"><button class="btn" id="add" style="width:100%">식재료 추가</button></div>
-    </div>
-    <p class="hint" id="ht">목록에 있는 재료는 구매일 기준으로 소비기한을 자동 계산해요.</p>
-  </details>
-  <div class="sec">내 식재료</div>
-  <div class="sum" id="sm"></div>
-  <ul id="ls"></ul>
+<section id="p1">
+  <div class="card" id="scan">
+    <div class="vf" id="vf"><video id="vd" playsinline muted></video><div class="ph"><b>📷</b><span>카메라를 켜고 바코드를 비춰 보세요</span></div><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><b class="ln"></b></div>
+    <div class="row"><button class="btn" id="cam">카메라 켜기</button><button class="btn ghost" id="flip">카메라 전환</button><label class="btn ghost" for="img">사진으로 인식</label><input id="img" type="file" accept="image/*" capture="environment" hidden></div>
+    <p class="hint" id="st">QR 바코드를 모형 음식에 붙이고 카메라 앞에 비춰 보세요.</p>
+  </div>
+  <details class="card"><summary>직접 추가하기</summary>
+    <div class="form">
+      <div class="w"><label for="nm">식재료 이름</label><input id="nm" type="text" list="fl" placeholder="예: 계란, 두부, 김치" autocomplete="off"><datalist id="fl"></datalist></div>
+      <div><label for="bd">구매일</label><input id="bd" type="date"></div>
+      <div><label for="ex">소비기한</label><input id="ex" type="date"></div>
+      <div class="w"><button class="btn" id="add" style="width:100%">식재료 추가</button></div>
+    </div>
+    <p class="hint" id="ht">목록에 있는 재료는 구매일 기준으로 소비기한을 자동 계산해요.</p>
+  </details>
+  <div class="sec">내 식재료</div>
+  <div class="sum" id="sm"></div>
+  <ul id="ls"></ul>
 </section>
 <section id="p2" hidden>
-  <div class="sec">오늘 만들 수 있는 요리</div>
-  <div class="bar"><select id="fs" aria-label="레시피 필터"><option value="all">내 재료로 가능한 레시피</option><option value="ready">바로 만들 수 있는 것만</option><option value="every">전체 레시피 보기</option></select></div>
-  <div id="rl"></div>
+  <div class="sec">오늘 만들 수 있는 요리</div>
+  <div class="bar"><select id="fs" aria-label="레시피 필터"><option value="all">내 재료로 가능한 레시피</option><option value="ready">바로 만들 수 있는 것만</option><option value="every">전체 레시피 보기</option></select></div>
+  <div id="rl"></div>
 </section>
 </div>
 
 <section id="p4" class="noprint" hidden>
-  <div class="sec">설정</div>
-  <div class="card"><label for="sn">냉장고 이름</label><input id="sn" type="text" maxlength="14" placeholder="우리집 냉장고"></div>
-  <div class="card"><div class="sec2">색상 테마</div><div class="sws" id="sws"></div></div>
-  <div class="card"><div class="sec2">화면 모드</div><div class="seg" id="seg"><button data-m="auto">자동</button><button data-m="light">라이트</button><button data-m="dark">다크</button></div></div>
-  <div class="card"><div class="tgl"><div><b>화면 항상 켜두기</b><p class="hint" style="margin:2px 0 0">냉장고에 붙여 둔 동안 화면이 꺼지지 않아요.</p></div><button class="sw" id="wk" role="switch" aria-checked="false" aria-label="화면 항상 켜두기"><i></i></button></div></div>
-  <div class="card"><button class="btn ghost" id="rs" style="width:100%">식재료 전체 삭제</button></div>
+  <div class="sec">설정</div>
+  <div class="card"><label for="sn">냉장고 이름</label><input id="sn" type="text" maxlength="14" placeholder="우리집 냉장고"></div>
+  <div class="card"><div class="sec2">색상 테마</div><div class="sws" id="sws"></div></div>
+  <div class="card"><div class="sec2">화면 모드</div><div class="seg" id="seg"><button data-m="auto">자동</button><button data-m="light">라이트</button><button data-m="dark">다크</button></div></div>
+  <div class="card"><div class="tgl"><div><b>화면 항상 켜두기</b><p class="hint" style="margin:2px 0 0">냉장고에 붙여 둔 동안 화면이 꺼지지 않아요.</p></div><button class="sw" id="wk" role="switch" aria-checked="false" aria-label="화면 항상 켜두기"><i></i></button></div></div>
+  <div class="card"><button class="btn ghost" id="rs" style="width:100%">식재료 전체 삭제</button></div>
 </section>
-<footer class="noprint">소비기한은 보관 조건에 따른 일반적인 추정값이에요. 저장된 식재료는 이 기기의 브라우저에만 보관돼요.</footer>
+<footer class="noprint">소비기한은 보관 조건에 따른 일반적인 추정값이에요. 제품 표시 사항을 우선 확인하세요. 소금, 간장, 식용유 같은 기본 양념은 있다고 가정했어요. 저장된 식재료는 이 기기의 브라우저에만 보관돼요.</footer>
 </main>
 <div class="dock noprint"><nav class="dk" role="tablist"><button role="tab" id="d1" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v1.5M9.5 13v3"/></svg><i class="badge" id="bg" hidden></i><span class="nn">식재료</span><span class="ww">홈</span></button><button role="tab" id="d2" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M17 3c-2 2-2 6 0 8v10M7 11v10"/></svg><span>레시피</span></button><button role="tab" id="d4" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></svg><span>설정</span></button></nav></div>
 <div class="tw"><div class="toast" id="toast" role="status"></div></div>
 
-<!-- Gemini AI 음성 비서 위젯 -->
-<div id="ai-chat-box">
-    <div class="chat-header">
-        <span>✨ 제미나이 AI 비서</span>
-        <button class="chat-close-btn" onclick="toggleChatBox(false)">✕</button>
-    </div>
-    <div class="chat-content" id="chat-messages">
-        <div class="msg ai">안녕하세요! 제미나이 버튼을 누르고 말씀해 주세요.</div>
-    </div>
-</div>
-<button id="ai-widget-btn" class="noprint" onclick="startVoiceRecognition()" title="제미나이 AI 호출하기">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z"/>
-    </svg>
-</button>
-
 <script>
-// 첨부 파일(PDF)에 명시된 공식 식재료 24종 데이터 (철저한 필터링 적용)[cite: 1, 2]
-const F={
-  계란:[25,'냉장'],우유:[10,'냉장'],두부:[10,'냉장'],김치:[90,'냉장'],대파:[14,'냉장'],
-  당근:[21,'냉장'],양배추:[14,'냉장'],애호박:[7,'냉장'],버섯:[7,'냉장'],시금치:[4,'냉장'],
-  돼지고기:[3,'냉장'],소고기:[3,'냉장'],닭고기:[2,'냉장'],베이컨:[14,'냉장'],어묵:[10,'냉장'],
-  치즈:[30,'냉장'],양파:[30,'실온'],감자:[30,'실온'],마늘:[30,'실온'],식빵:[5,'실온'],
-  참치캔:[730,'실온'],라면:[180,'실온'],파스타면:[365,'실온'],밥:[30,'냉동']
-};
+(function(G){
+'use strict';
+const ECT={1:{L:[7,1],M:[10,1],Q:[13,1],H:[17,1]},2:{L:[10,1],M:[16,1],Q:[22,1],H:[28,1]},3:{L:[15,1],M:[26,1],Q:[18,2],H:[22,2]},4:{L:[20,1],M:[18,2],Q:[26,2],H:[16,4]}};
+const TOT=[0,26,44,70,100],LV={1:'L',0:'M',3:'Q',2:'H'};
+const EXP=new Uint8Array(512),LOG=new Uint8Array(256);
+{let x=1;for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&256)x^=0x11d}for(let i=255;i<512;i++)EXP[i]=EXP[i-255]}
+const mul=(a,b)=>(a&&b)?EXP[LOG[a]+LOG[b]]:0;
+const dvd=(a,b)=>a?EXP[(LOG[a]+255-LOG[b])%255]:0;
+const FMT=[];for(let d=0;d<32;d++){const v=d<<10;let r=v;for(let i=14;i>=10;i--)if((r>>i)&1)r^=0x537<<(i-10);FMT.push([(v|r)^0x5412,d])}
+const pc=x=>{let c=0;while(x){c+=x&1;x>>=1}return c};
+function synd(r,ec){const S=[];let bad=false;for(let j=0;j<ec;j++){let s=0;const a=EXP[j];for(let i=0;i<r.length;i++)s=mul(s,a)^r[i];S.push(s);if(s)bad=true}return[S,bad]}
+function rsFix(r,ec){
+  const n=r.length;let[S,bad]=synd(r,ec);if(!bad)return true;
+  let C=[1],B=[1],L=0,m=1,b=1;
+  for(let k=0;k<ec;k++){
+    let d=S[k];for(let i=1;i<=L;i++)d^=mul(C[i]||0,S[k-i]);
+    if(!d){m++;continue}
+    const T=C.slice(),co=dvd(d,b);
+    for(let i=0;i<B.length;i++)C[i+m]=(C[i+m]||0)^mul(co,B[i]);
+    if(2*L<=k){L=k+1-L;B=T;b=d;m=1}else m++;
+  }
+  const pos=[];
+  for(let p=0;p<n;p++){const xi=EXP[(255-p%255)%255];let v=0,xp=1;for(let i=0;i<C.length;i++){v^=mul(C[i],xp);xp=mul(xp,xi)}if(!v)pos.push(p)}
+  if(!L||pos.length!==L||L>ec/2)return false;
+  const O=new Array(ec).fill(0);
+  for(let i=0;i<ec;i++)for(let j=0;j<C.length&&i+j<ec;j++)O[i+j]^=mul(S[i],C[j]);
+  for(const p of pos){
+    const X=EXP[p%255],lx=(255-p%255)%255,xi=EXP[lx];
+    let o=0,xp=1;for(let i=0;i<ec;i++){o^=mul(O[i],xp);xp=mul(xp,xi)}
+    let dd=0;for(let i=1;i<C.length;i+=2)dd^=mul(C[i],EXP[((i-1)*lx)%255]);
+    if(!dd)return false;
+    r[n-1-p]^=mul(X,dvd(o,dd));
+  }
+  return !synd(r,ec)[1];
+}
+function funcMask(dim,ver){
+  const f=new Uint8Array(dim*dim),set=(a,b,c,d)=>{for(let y=b;y<=d;y++)for(let x=a;x<=c;x++)f[y*dim+x]=1};
+  set(0,0,8,8);set(dim-8,0,dim-1,8);set(0,dim-8,8,dim-1);
+  for(let i=0;i<dim;i++){f[6*dim+i]=1;f[i*dim+6]=1}
+  if(ver>=2){const c=dim-7;set(c-2,c-2,c+2,c+2)}
+  return f;
+}
+const MK=[(i,j)=>(i+j)%2===0,(i)=>i%2===0,(i,j)=>j%3===0,(i,j)=>(i+j)%3===0,(i,j)=>(((i>>1)+((j/3)|0))%2)===0,(i,j)=>((i*j)%2+(i*j)%3)===0,(i,j)=>(((i*j)%2+(i*j)%3)%2)===0,(i,j)=>((((i+j)%2)+((i*j)%3))%2)===0];
+function parse(bytes){
+  const T=bytes.length*8;let p=0,s='';
+  const rd=n=>{let v=0;for(let i=0;i<n;i++){v=(v<<1)|((bytes[p>>3]>>(7-(p&7)))&1);p++}return v};
+  while(p+4<=T){
+    const mode=rd(4);if(!mode)break;
+    if(mode===4){const c=rd(8),a=[];for(let i=0;i<c;i++)a.push(rd(8));s+=new TextDecoder().decode(new Uint8Array(a))}
+    else if(mode===2){const AL='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:';let c=rd(9);for(;c>1;c-=2){const v=rd(11);s+=AL[(v/45)|0]+AL[v%45]}if(c)s+=AL[rd(6)]}
+    else if(mode===1){let c=rd(10);for(;c>=3;c-=3)s+=String(rd(10)).padStart(3,'0');if(c===2)s+=String(rd(7)).padStart(2,'0');else if(c===1)s+=rd(4)}
+    else return null;
+  }
+  return s;
+}
+function decodeGrid(g,dim){
+  const ver=(dim-17)/4,at=(x,y)=>g[y*dim+x];
+  const rb=a=>{let v=0;for(const [x,y] of a)v=(v<<1)|at(x,y);return v};
+  const c1=[];for(let x=0;x<=5;x++)c1.push([x,8]);c1.push([7,8],[8,8],[8,7]);for(let y=5;y>=0;y--)c1.push([8,y]);
+  const c2=[];for(let y=dim-1;y>=dim-7;y--)c2.push([8,y]);for(let x=dim-8;x<dim;x++)c2.push([x,8]);
+  let best=null,bd=99;
+  for(const v of[rb(c1),rb(c2)])for(const[code,d]of FMT){const h=pc(v^code);if(h<bd){bd=h;best=d}}
+  if(bd>3)return null;
+  const lvl=LV[best>>3],mk=MK[best&7],f=funcMask(dim,ver),bits=[];
+  let up=true;
+  for(let x=dim-1;x>0;x-=2){
+    if(x===6)x=5;
+    for(let k=0;k<dim;k++){const y=up?dim-1-k:k;for(let c=0;c<2;c++){const xx=x-c;if(!f[y*dim+xx])bits.push(at(xx,y)^(mk(y,xx)?1:0))}}
+    up=!up;
+  }
+  const cw=[];for(let i=0;i+8<=bits.length&&cw.length<TOT[ver];i+=8){let v=0;for(let j=0;j<8;j++)v=(v<<1)|bits[i+j];cw.push(v)}
+  if(cw.length<TOT[ver])return null;
+  const[ecl,nb]=ECT[ver][lvl],dl=(TOT[ver]-ecl*nb)/nb,blocks=[];
+  for(let b=0;b<nb;b++)blocks.push([]);
+  let idx=0;
+  for(let i=0;i<dl;i++)for(let b=0;b<nb;b++)blocks[b].push(cw[idx++]);
+  for(let i=0;i<ecl;i++)for(let b=0;b<nb;b++)blocks[b].push(cw[idx++]);
+  const out=[];
+  for(const bl of blocks){if(!rsFix(bl,ecl))return null;for(let i=0;i<dl;i++)out.push(bl[i])}
+  return parse(out);
+}
+function binarize(d,w,h){
+  const g=new Uint8Array(w*h);
+  for(let i=0,j=0;i<w*h;i++,j+=4)g[i]=(d[j]*77+d[j+1]*150+d[j+2]*29)>>8;
+  const W=w+1,I=new Int32Array(W*(h+1));
+  for(let y=0;y<h;y++){let r=0;for(let x=0;x<w;x++){r+=g[y*w+x];I[(y+1)*W+x+1]=I[y*W+x+1]+r}}
+  const half=Math.max(12,(Math.min(w,h)/8)|0),bin=new Uint8Array(w*h);
+  for(let y=0;y<h;y++){
+    const y0=Math.max(0,y-half),y1=Math.min(h,y+half+1);
+    for(let x=0;x<w;x++){
+      const x0=Math.max(0,x-half),x1=Math.min(w,x+half+1);
+      const s=I[y1*W+x1]-I[y0*W+x1]-I[y1*W+x0]+I[y0*W+x0];
+      bin[y*w+x]=g[y*w+x]*(x1-x0)*(y1-y0)<s-10*(x1-x0)*(y1-y0)?1:0;
+    }
+  }
+  return bin;
+}
+function okRatio(l,tolF){
+  const t=l[0]+l[1]+l[2]+l[3]+l[4];if(t<7||!l[0]||!l[1]||!l[3]||!l[4])return 0;
+  const m=t/7,tol=m*tolF;
+  return(Math.abs(l[0]-m)<tol&&Math.abs(l[1]-m)<tol&&Math.abs(l[3]-m)<tol&&Math.abs(l[4]-m)<tol&&Math.abs(l[2]-3*m)<3*tol)?t:0;
+}
+function line(get,n,c){
+  let a=[0,0,0],i=c;
+  while(i>=0&&get(i)===1){a[0]++;i--}while(i>=0&&get(i)===0){a[1]++;i--}while(i>=0&&get(i)===1){a[2]++;i--}
+  let b=[0,0,0];i=c+1;
+  while(i<n&&get(i)===1){b[0]++;i++}while(i<n&&get(i)===0){b[1]++;i++}while(i<n&&get(i)===1){b[2]++;i++}
+  const l=[a[2],a[1],a[0]+b[0],b[1],b[2]],t=okRatio(l,0.75);
+  return t?{c:c-a[0]+1+(a[0]+b[0])/2,t}:null;
+}
+function findFinders(bin,w,h){
+  const cand=[];
+  for(let y=0;y<h;y+=2){
+    const rs=[],rl=[];let cur=bin[y*w],st=0;
+    for(let x=1;x<=w;x++){const v=x<w?bin[y*w+x]:2;if(v!==cur){rs.push(st);rl.push(x-st);st=x;cur=v}}
+    const c0=bin[y*w];
+    for(let k=0;k+4<rl.length;k++){
+      if(((c0^(k&1))&1)!==1)continue;
+      const l=[rl[k],rl[k+1],rl[k+2],rl[k+3],rl[k+4]];
+      if(!okRatio(l,0.75))continue;
+      const cx=Math.round(rs[k+2]+l[2]/2);
+      const v=line(i=>bin[i*w+cx],h,y);if(!v)continue;
+      const cy=Math.round(v.c),hh=line(i=>bin[cy*w+i],w,cx);if(!hh)continue;
+      const X=hh.c,Y=v.c,m=(hh.t+v.t)/14;
+      let f=null;for(const q of cand)if(Math.abs(q.x-X)<m*2&&Math.abs(q.y-Y)<m*2){f=q;break}
+      if(f){f.x=(f.x*f.n+X)/(f.n+1);f.y=(f.y*f.n+Y)/(f.n+1);f.m=(f.m*f.n+m)/(f.n+1);f.n++}else cand.push({x:X,y:Y,m,n:1});
+    }
+  }
+  return cand;
+}
+function triple(c){
+  c=c.filter(a=>a.n>=2).sort((a,b)=>b.n-a.n).slice(0,8);
+  let best=null,bs=9;
+  for(let i=0;i<c.length;i++)for(let j=i+1;j<c.length;j++)for(let k=j+1;k<c.length;k++){
+    const t=[c[i],c[j],c[k]],ms=t.map(a=>a.m);
+    if(Math.max(...ms)/Math.min(...ms)>1.7)continue;
+    for(let v=0;v<3;v++){
+      const V=t[v],P=t[(v+1)%3],Q=t[(v+2)%3];
+      const ax=P.x-V.x,ay=P.y-V.y,bx=Q.x-V.x,by=Q.y-V.y,la=Math.hypot(ax,ay),lb=Math.hypot(bx,by);
+      const co=Math.abs(ax*bx+ay*by)/(la*lb),ra=la/lb;
+      if(co<0.4&&ra>0.55&&ra<1.8){const sc=co+Math.abs(1-ra)*0.3;if(sc<bs){bs=sc;best=(ax*by-ay*bx)>0?[V,P,Q]:[V,Q,P]}}
+    }
+  }
+  return best;
+}
+function homog(src,dst){
+  const A=[];
+  for(let i=0;i<4;i++){const[u,v]=src[i],[x,y]=dst[i];A.push([u,v,1,0,0,0,-u*x,-v*x,x],[0,0,0,u,v,1,-u*y,-v*y,y])}
+  for(let c=0;c<8;c++){
+    let p=c;for(let r=c+1;r<8;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;
+    if(Math.abs(A[p][c])<1e-9)return null;
+    [A[c],A[p]]=[A[p],A[c]];
+    for(let r=0;r<8;r++)if(r!==c){const f=A[r][c]/A[c][c];for(let k=c;k<9;k++)A[r][k]-=f*A[c][k]}
+  }
+  const h=A.map((r,i)=>r[8]/r[i]);
+  return(u,v)=>{const d=h[6]*u+h[7]*v+1;return[(h[0]*u+h[1]*v+h[2])/d,(h[3]*u+h[4]*v+h[5])/d]};
+}
+function sample(bin,w,h,M,dim){
+  const g=new Uint8Array(dim*dim),O=[[0,0],[.2,.2],[-.2,.2],[.2,-.2],[-.2,-.2]];
+  for(let r=0;r<dim;r++)for(let c=0;c<dim;c++){
+    let s=0;
+    for(const[du,dv]of O){const[x,y]=M(c+.5+du,r+.5+dv),xi=Math.round(x),yi=Math.round(y);if(xi>=0&&yi>=0&&xi<w&&yi<h)s+=bin[yi*w+xi]}
+    g[r*dim+c]=s>=3?1:0;
+  }
+  return g;
+}
+function tryDim(bin,w,h,T,dim){
+  const[TL,TR,BL]=T,ver=(dim-17)/4,e=3.5,src=[[e,e],[dim-e,e],[e,dim-e]];
+  const dst=[[TL.x,TL.y],[TR.x,TR.y],[BL.x,BL.y]];
+  const q4=[TR.x+BL.x-TL.x,TR.y+BL.y-TL.y];
+  const M0=homog([...src,[dim-e,dim-e]],[...dst,q4]);if(!M0)return null;
+  const run=M=>{
+    const g=sample(bin,w,h,M,dim);
+    let r=decodeGrid(g,dim);if(r)return r;
+    const t=new Uint8Array(dim*dim);for(let y=0;y<dim;y++)for(let x=0;x<dim;x++)t[y*dim+x]=g[x*dim+y];
+    return decodeGrid(t,dim);
+  };
+  const a=ver>=2?dim-6.5:dim-e,[px,py]=M0(a,a),ex=[(TR.x-TL.x)/(dim-7),(TR.y-TL.y)/(dim-7)],ey=[(BL.x-TL.x)/(dim-7),(BL.y-TL.y)/(dim-7)];
+  const offs=[];
+  for(let dy=-3;dy<=3;dy+=.5)for(let dx=-3;dx<=3;dx+=.5)offs.push([dx,dy]);
+  offs.sort((p,q)=>(p[0]*p[0]+p[1]*p[1])-(q[0]*q[0]+q[1]*q[1]));
+  for(const[dx,dy]of offs){
+    const M=homog([...src,[a,a]],[...dst,[px+dx*ex[0]+dy*ey[0],py+dx*ex[1]+dy*ey[1]]]);
+    if(!M)continue;
+    const r=run(M);if(r)return r;
+  }
+  return null;
+}
+function qrDecode(d,w,h){
+  const bin=binarize(d,w,h),cand=findFinders(bin,w,h),T=triple(cand);
+  if(!T)return null;
+  const m=(T[0].m+T[1].m+T[2].m)/3,dist=(Math.hypot(T[1].x-T[0].x,T[1].y-T[0].y)+Math.hypot(T[2].x-T[0].x,T[2].y-T[0].y))/2;
+  const est=dist/m+7,k0=Math.round((est-17)/4);
+  for(const k of[k0,k0-1,k0+1]){if(k<1||k>4)continue;try{const r=tryDim(bin,w,h,T,17+4*k);if(r)return r}catch(e){}}
+  return null;
+}
+G.qrDecode=qrDecode;
+if(typeof module!=='undefined')module.exports=qrDecode;
+})(typeof window!=='undefined'?window:globalThis);
 
+</script>
+<script>
+const F={계란:[25,'냉장'],우유:[10,'냉장'],두부:[10,'냉장'],김치:[90,'냉장'],대파:[14,'냉장'],당근:[21,'냉장'],양배추:[14,'냉장'],애호박:[7,'냉장'],버섯:[7,'냉장'],시금치:[4,'냉장'],돼지고기:[3,'냉장'],소고기:[3,'냉장'],닭고기:[2,'냉장'],베이컨:[14,'냉장'],어묵:[10,'냉장'],치즈:[30,'냉장'],양파:[30,'실온'],감자:[30,'실온'],마늘:[30,'실온'],식빵:[5,'실온'],참치캔:[730,'실온'],라면:[180,'실온'],파스타면:[365,'실온'],밥:[30,'냉동']};
 const R=[
 {n:'계란말이',t:15,i:['계란','대파'],o:['당근'],s:['계란을 풀고 잘게 썬 대파와 당근, 소금 한 꼬집을 섞어요.','약불로 달군 팬에 기름을 두르고 계란물을 얇게 부어요.','살짝 익으면 돌돌 말고, 남은 계란물을 부어 반복해요.','한 김 식힌 뒤 썰어 내요.']},
 {n:'김치볶음밥',t:15,i:['밥','김치','계란'],o:['대파'],s:['김치와 대파를 잘게 썰어 기름에 먼저 볶아요.','밥을 넣고 고슬고슬하게 볶아요.','간장 약간으로 간을 맞춰요.','계란프라이를 올려 완성해요.']},
@@ -226,366 +388,48 @@ const R=[
 {n:'계란 라면',t:10,i:['라면','계란'],o:['대파'],s:['물이 끓으면 면과 스프를 넣어요.','대파를 넣고 면이 익을 때까지 끓여요.','계란을 풀어 넣고 불을 꺼요.']}
 ];
 
+
+const PFX='FRIDGE:';
 const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
 const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
 const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
-
 const em=n=>EMO[n]||'🍽️';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
-const parseDate=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
 const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const left=s=>Math.round((parseDate(s)-today())/864e5);
-const addDays=(s,n)=>{const d=parseDate(s);d.setDate(d.getDate()+n);return fmt(d)};
+const left=s=>Math.round((parse(s)-today())/864e5);
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return fmt(d)};
 const cls=d=>d<0?1:d<=3?2:3;
 const lab=d=>d<0?'만료 '+(-d)+'일':d===0?'오늘까지':'D-'+d;
-
-let items=[],manual=false,newId=null,wakeLock=null;
-try{items=JSON.parse(localStorage.getItem('fridge')||'[]')}catch(e){items=[]}
+let items=[],manual=false,newId=null,facing='user';
+try{items=JSON.parse(localStorage.getItem('fridge')||'[]');facing=localStorage.getItem('fridgeCam')||'user'}catch(e){items=[]}
 const save=()=>{try{localStorage.setItem('fridge',JSON.stringify(items))}catch(e){}};
 
+/* toast */
 let tt;
-function toast(h){const t=$('#toast');if(!t)return;t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
 
-// 첨부 파일(PDF)에 명시된 24종 식재료만 검증하여 등록[cite: 1, 2]
+/* add */
 function addFood(name){
-  let cleanName = name.trim();
-  if(BYSLUG[cleanName]) cleanName = BYSLUG[cleanName];
-  const f = F[cleanName];
-  if(!f) {
-    toast('<span>⚠️</span><span>파일에 없는 식재료입니다: '+esc(cleanName)+'</span>');
-    return false;
-  }
-  const b=fmt(today()), id=Date.now()+Math.random();
-  items.push({id, name:cleanName, buy:b, exp:addDays(b,f[0]), st:f[1]});
-  newId=id; save(); render();
-  const v=$('#vf');if(v){v.classList.add('hit');setTimeout(()=>v.classList.remove('hit'),700);}
-  toast('<span style="font-size:22px">'+em(cleanName)+'</span><span>'+esc(cleanName)+' 등록완료 (소비기한 '+addDays(b,f[0])+')</span>');
-  return true;
+  const f=F[name];if(!f)return false;
+  const b=fmt(today()),id=Date.now()+Math.random();
+  items.push({id,name,buy:b,exp:addDays(b,f[0]),st:f[1]});newId=id;save();render();
+  const v=$('#vf');v.classList.add('hit');setTimeout(()=>v.classList.remove('hit'),700);
+  toast('<span style="font-size:22px">'+em(name)+'</span><span>'+esc(name)+' 등록 · 소비기한 '+addDays(b,f[0])+'</span>');
+  return true;
 }
-
-const flList=$('#fl');if(flList) flList.innerHTML=Object.keys(F).map(k=>'<option value="'+k+'">').join('');
-const bdInput=$('#bd');if(bdInput) bdInput.value=fmt(today());
-
-function auto(){
-  const nmInput=$('#nm');const exInput=$('#ex');const htInput=$('#ht');
-  if(!nmInput || !exInput) return;
-  const f=F[nmInput.value.trim()],b=bdInput ? bdInput.value : fmt(today());
-  if(f&&b&&!manual){
-    exInput.value=addDays(b,f[0]);
-    if(htInput) htInput.textContent='자동 계산: '+f[1]+' 보관 시 구매 후 약 '+f[0]+'일.';
-  }
-}
-if($('#nm')) $('#nm').addEventListener('input',()=>{manual=false;auto()});
-if(bdInput) bdInput.addEventListener('change',auto);
-if($('#ex')) $('#ex').addEventListener('input',()=>{manual=true});
-
-const addBtn=$('#add');
-if(addBtn){
-  addBtn.onclick=()=>{
-    const name=$('#nm').value.trim(),buy=$('#bd').value,exp=$('#ex').value;
-    if(!name){if($('#ht'))$('#ht').textContent='식재료 이름을 입력해 주세요.';if($('#nm'))$('#nm').focus();return}
-    if(!exp){if($('#ht'))$('#ht').textContent='소비기한을 입력해 주세요.';if($('#ex'))$('#ex').focus();return}
-    addFood(name);
-    if($('#nm'))$('#nm').value='';if($('#ex'))$('#ex').value='';manual=false;
-  };
-}
-
-function render(){
-  const ls=$('#ls'),sm=$('#sm');if(!ls||!sm)return;
-  items.sort((a,b)=>a.exp.localeCompare(b.exp));
-  let c1=0,c2=0,c3=0;
-  items.forEach(it=>{const d=left(it.exp);const cl=cls(d);if(cl===1)c1++;else if(cl===2)c2++;else c3++});
-  sm.innerHTML=`<span class="pill p1">만료 ${c1}</span><span class="pill p2">임박 ${c2}</span><span class="pill p3">여유 ${c3}</span>`;
-  if(!items.length){ls.innerHTML='<li class="empty">냉장고가 비어 있어요. 바코드를 비추거나 직접 추가해 보세요.</li>';renderRecipes();return;}
-  ls.innerHTML=items.map(it=>{
-    const d=left(it.exp),cl=cls(d),l=lab(d);
-    return `<li class="it c${cl} ${it.id===newId?'new':''}" data-id="${it.id}"><div class="em">${em(it.name)}</div><div class="bd"><b>${esc(it.name)}</b><span>${it.st} · 구매 ${it.buy} · 기한 ${it.exp}</span></div><div class="dd">${l}</div><button class="del" aria-label="삭제">✕</button></li>`;
-  }).join('');
-  newId=null;
-  ls.querySelectorAll('.del').forEach(btn=>{
-    btn.onclick=e=>{
-      const li=e.target.closest('.it'),id=Number(li.dataset.id);
-      li.classList.add('out');
-      setTimeout(()=>{items=items.filter(x=>x.id!==id);save();render()},280);
-    };
-  });
-  renderRecipes();dateBadgeCount();
-}
-
-function renderRecipes(){
-  const rl=$('#rl');if(!rl)return;
-  const have=new Set(items.map(x=>x.name));
-  const filter=$('#fs')?.value||'all';
-  const list=R.filter(r=>{
-    const need=r.i,opt=r.o||[];
-    const hasN=need.filter(x=>have.has(x)).length;
-    const hasO=opt.filter(x=>have.has(x)).length;
-    const score=(hasN+hasO)/(need.length+opt.length);
-    r._sc=score;r._hn=hasN;r._nn=need.length;
-    if(filter==='ready')return hasN===need.length;
-    if(filter==='every')return true;
-    return hasN>0||hasO>0;
-  }).sort((a,b)=>b._sc-a._sc);
-
-  if(!list.length){rl.innerHTML='<div class="empty">조건에 맞는 레시피가 없어요. 식재료를 더 추가해 보세요!</div>';return;}
-  rl.innerHTML=list.map(r=>{
-    const need=r.i,opt=r.o||[];
-    const tags=[...need.map(x=>({n:x,t:'have',s:have.has(x)})),...opt.map(x=>({n:x,t:'soon',s:have.has(x)}))];
-    const pct=Math.round((r._hn/r._nn)*100);
-    return `<div class="rc"><h3>${esc(r.n)}</h3><div class="meta">소요시간 약 ${r.t}분 · 재료 일치율 ${pct}%</div><div class="prog" style="--w:${pct}%"><i></i></div><div class="tags">${tags.map(tg=>`<span class="tg ${tg.s?'have':'miss'}">${tg.s?'✓ ':'+ '}${esc(tg.n)}</span>`).join('')}</div><details><summary>조리 순서 보기</summary><ol>${r.s.map(st=>'<li>'+esc(st)+'</li>').join('')}</ol></details></div>`;
-  }).join('');
-}
-if($('#fs')) $('#fs').onchange=renderRecipes;
-
-function dateBadgeCount(){
-  const c1=items.filter(x=>cls(left(x.exp))===1).length;
-  const bg=$('#bg');if(!bg)return;
-  if(c1>0){bg.hidden=false;bg.textContent=c1;}else{bg.hidden=true;}
-}
-
-// 탭 전환 애니메이션
-const tabs=document.querySelectorAll('.dk button');
-tabs.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    tabs.forEach(b=>b.setAttribute('aria-selected','false'));
-    btn.setAttribute('aria-selected','true');
-    const id=btn.id;
-    
-    document.querySelectorAll('.home > section, #p4').forEach(sec => sec.hidden = true);
-    if(id==='d1') { $('#p1').hidden = false; $('#p1').classList.add('in'); }
-    else if(id==='d2') { $('#p2').hidden = false; $('#p2').classList.add('in'); }
-    else if(id==='d4') { $('#p4').hidden = false; $('#p4').classList.add('in'); }
-  });
-});
-
-// 고성능 바코드 & QR 스캐너 연동
-let html5QrCode = null;
-let currentCameraMode = "environment";
-let isScanning = false;
-let lastScanTime = 0;
-
-function onScanSuccess(decodedText) {
-  const now = Date.now();
-  if (now - lastScanTime < 2000) return;
-  lastScanTime = now;
-  addFood(decodedText);
-}
-
-async function startCamera() {
-  if (isScanning) {
-    stopCamera();
-    return;
-  }
-  if (!html5QrCode) {
-    html5QrCode = new Html5Qrcode("reader");
-  }
-  try {
-    $('#vf').classList.add('on');
-    await html5QrCode.start(
-      { facingMode: currentCameraMode },
-      { fps: 15, qrbox: { width: 250, height: 250 } },
-      onScanSuccess,
-      () => {}
-    );
-    isScanning = true;
-    $('#cam').textContent = "카메라 끄기";
-  } catch (err) {
-    $('#vf').classList.remove('on');
-    alert("카메라 권한을 얻을 수 없거나 카메라가 존재하지 않습니다.");
-  }
-}
-
-async function stopCamera() {
-  if (html5QrCode && isScanning) {
-    await html5QrCode.stop();
-    isScanning = false;
-    $('#vf').classList.remove('on');
-    $('#cam').textContent = "카메라 켜기";
-  }
-}
-
-async function switchCamera() {
-  currentCameraMode = (currentCameraMode === "environment") ? "user" : "environment";
-  if (isScanning) {
-    await stopCamera();
-    await startCamera();
-  }
-}
-
-$('#cam').onclick = startCamera;
-$('#flip').onclick = switchCamera;
-
-$('#img').onchange = e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-  html5QrCode.scanFile(file, true)
-    .then(decodedText => onScanSuccess(decodedText))
-    .catch(() => toast("바코드/QR 코드를 찾을 수 없습니다."));
-};
-
-// 실시간 시계
-function updateClock(){
-    const now = new Date();
-    const ck=$('#ck'), dt=$('#dt');
-    if(ck) ck.innerText = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-    if(dt) dt.innerText = (now.getMonth()+1) + '월 ' + now.getDate() + '일';
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-const fnSpan=$('#fn'), snInput=$('#sn');
-if(snInput && fnSpan){
-    snInput.value = localStorage.getItem('fridgeName') || '우리집 냉장고';
-    fnSpan.textContent = snInput.value;
-    snInput.oninput = () => {
-        fnSpan.textContent = snInput.value || '우리집 냉장고';
-        localStorage.setItem('fridgeName', snInput.value);
-    };
-}
-
-// 색상 테마 시스템
-const THEMES = [
-  {id:'g', c:'#0b8a63', ac2:'#e2f3ec'},
-  {id:'b', c:'#2563eb', ac2:'#eff6ff'},
-  {id:'p', c:'#7c3aed', ac2:'#f5f3ff'},
-  {id:'o', c:'#ea580c', ac2:'#fff7ed'}
-];
-const sws=$('#sws');
-if(sws){
-    sws.innerHTML = THEMES.map(t => `<button class="swb" data-t="${t.id}" aria-pressed="${(localStorage.getItem('fridgeTheme')||'g')===t.id}"><i style="--c:${t.c}"></i></button>`).join('');
-    sws.onclick = e => {
-        const btn = e.target.closest('.swb');if(!btn)return;
-        const tid = btn.dataset.t;
-        const th = THEMES.find(x=>x.id===tid);
-        if(th){
-            document.documentElement.style.setProperty('--ac', th.c);
-            document.documentElement.style.setProperty('--ac2', th.ac2);
-            localStorage.setItem('fridgeTheme', tid);
-            sws.querySelectorAll('.swb').forEach(b=>b.setAttribute('aria-pressed', b===btn));
-        }
-    };
-}
-
-// 다크/라이트 모드 설정
-const seg=$('#seg');
-if(seg){
-    const mode = localStorage.getItem('fridgeMode') || 'auto';
-    seg.querySelectorAll('button').forEach(b=>{
-        b.setAttribute('aria-pressed', b.dataset.m === mode);
-        b.onclick = () => {
-            seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', false));
-            b.setAttribute('aria-pressed', true);
-            localStorage.setItem('fridgeMode', b.dataset.m);
-            if(b.dataset.m === 'auto') document.documentElement.removeAttribute('data-theme');
-            else document.documentElement.setAttribute('data-theme', b.dataset.m);
-        };
-    });
-}
-
-// 화면 항상 켜두기 (Wake Lock)
-const wk=$('#wk');
-if(wk){
-    wk.onclick = async () => {
-        const ch = wk.getAttribute('aria-checked') === 'true';
-        if(!ch){
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                wk.setAttribute('aria-checked', 'true');
-                toast('화면 항상 켜두기가 활성화되었습니다.');
-            } catch(e) { toast('이 브라우저에서는 사용할 수 없습니다.'); }
-        } else {
-            if(wakeLock){ wakeLock.release(); wakeLock = null; }
-            wk.setAttribute('aria-checked', 'false');
-            toast('화면 항상 켜두기가 해제되었습니다.');
-        }
-    };
-}
-
-if($('#rs')) $('#rs').onclick=()=>{if(confirm('모든 식재료를 삭제하시겠어요?')){items=[];save();render();toast('전체 삭제되었습니다.');}};
-
-// Gemini AI 음성 비서 위젯
-function toggleChatBox(show) {
-    const chatBox = document.getElementById('ai-chat-box');
-    if(chatBox) chatBox.classList.toggle('active', show);
-}
-
-function appendMessage(sender, text) {
-    const container = document.getElementById('chat-messages');
-    if(!container) return;
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `msg ${sender}`;
-    msgDiv.innerText = text;
-    container.appendChild(msgDiv);
-    container.scrollTop = container.scrollHeight;
-}
-
-function speak(text) {
-    if ('speechSynthesis' in window) {
-        try {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ko-KR';
-            utterance.rate = 1.0;
-            window.speechSynthesis.speak(utterance);
-        } catch(e) {}
-    }
-}
-
-function startVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("이 브라우저는 음성 인식을 지원하지 않습니다.");
-        return;
-    }
-
-    toggleChatBox(true);
-    const btn = document.getElementById('ai-widget-btn');
-    if(btn) btn.classList.add('listening');
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'ko-KR';
-    recognition.interimResults = false;
-    recognition.start();
-
-    recognition.onresult = async function(event) {
-        if(btn) btn.classList.remove('listening');
-        const userText = event.results[0][0].transcript;
-        appendMessage('user', userText);
-        appendMessage('ai', "생각 중입니다...");
-
-        try {
-            const response = await fetch('/api/ai', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userText })
-            });
-            const data = await response.json();
-            
-            const chatContent = document.getElementById('chat-messages');
-            if(chatContent && chatContent.lastChild) {
-                chatContent.removeChild(chatContent.lastChild);
-            }
-
-            const aiReply = data.reply || "응답을 받지 못했습니다.";
-            appendMessage('ai', aiReply);
-            speak(aiReply);
-        } catch (err) {
-            const chatContent = document.getElementById('chat-messages');
-            if(chatContent && chatContent.lastChild) {
-                chatContent.removeChild(chatContent.lastChild);
-            }
-            appendMessage('ai', "서버 통신 중 오류가 발생했습니다.");
-        }
-    };
-
-    recognition.onerror = function() { if(btn) btn.classList.remove('listening'); };
-    recognition.onend = function() { if(btn) btn.classList.remove('listening'); };
-}
-
-render();
-</script>
-</body>
-</html>
+$('#fl').innerHTML=Object.keys(F).map(k=>'<option value="'+k+'">').join('');
+$('#bd').value=fmt(today());
+function auto(){const f=F[$('#nm').value.trim()],b=$('#bd').value;if(f&&b&&!manual){$('#ex').value=addDays(b,f[0]);$('#ht').textContent='자동 계산: '+f[1]+' 보관 시 구매 후 약 '+f[0]+'일. 날짜는 직접 바꿀 수 있어요.'}}
+$('#nm').addEventListener('input',()=>{manual=false;auto()});
+$('#bd').addEventListener('change',auto);
+$('#ex').addEventListener('input',()=>{manual=true});
+$('#add').onclick=()=>{
+  const name=$('#nm').value.trim(),buy=$('#bd').value,exp=$('#ex').value;
+  if(!name){$('#ht').textContent='식재료 이름을 입력해 주세요.';$('#nm').focus();return}
+  if(!exp){$('#ht').textContent='소비기한을 입력해 주세요. 목록에 없는 재료는 날짜를 직접 정해야 해요.';$('#ex').focus();return}
+  const id=Date.now()+Math.random();
+  items.push({id,name,buy,exp,st:(F[name]||[0,'직접 입력'])[1]});newId=id;save();
+  $('#nm').value='';$('#ex').value='';ma
