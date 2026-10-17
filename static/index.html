@@ -14,10 +14,6 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
 main{max-width:680px;margin:0 auto;padding:96px 18px 150px}
-.hd{display:flex;gap:14px;align-items:center;margin-bottom:22px}
-.lg{width:52px;height:52px;border-radius:16px;background:var(--ac);color:var(--acf);display:grid;place-items:center;flex:none}
-h1{font-size:28px;line-height:1.2;margin:0;letter-spacing:-.03em;font-weight:700}
-.lead{color:var(--sub);margin:4px 0 0;font-size:15px}
 button:focus-visible,input:focus-visible,summary:focus-visible,label.btn:focus-within{outline:3px solid var(--ac);outline-offset:2px}
 section.in{animation:in .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes in{from{opacity:0;transform:translateY(10px)}}
@@ -26,8 +22,9 @@ section.in{animation:in .45s cubic-bezier(.2,.8,.2,1)}
 #reader{width:100%;height:100%;object-fit:cover}
 #reader video{width:100%!important;height:100%!important;object-fit:cover!important}
 .vf.hit{box-shadow:inset 0 0 0 5px var(--ac)}
-.ph{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;color:#9fb5ab;font-size:15px;pointer-events:none;z-index:2;transition:opacity .5s}
+.ph{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;color:#9fb5ab;font-size:15px;pointer-events:none;z-index:2}
 .ph b{font-size:34px}
+.vf.on .ph{display:none}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{font:inherit;font-weight:500;font-size:16px;border:1px solid transparent;border-radius:14px;padding:12px 18px;background:var(--ac);color:var(--acf);cursor:pointer;text-align:center;white-space:nowrap;transition:transform .2s,opacity .2s}
 .btn:active{transform:scale(.96)}.btn.ghost{background:none;color:var(--ac);border-color:var(--ln)}
@@ -150,7 +147,7 @@ input{user-select:text;-webkit-user-select:text}
       <label class="btn ghost" for="img">사진으로 인식</label>
       <input id="img" type="file" accept="image/*" hidden>
     </div>
-    <p class="hint" id="st">첨부 파일에 명시된 식재료 바코드/QR 코드를 비추면 자동 등록됩니다.</p>
+    <p class="hint" id="st">첨부 파일에 명시된 24종 식재료 바코드/QR 코드를 비추면 자동 등록됩니다.</p>
   </div>
   <details class="card"><summary>직접 추가하기</summary>
     <div class="form">
@@ -202,7 +199,7 @@ input{user-select:text;-webkit-user-select:text}
 </button>
 
 <script>
-// 첨부 파일에 명시된 공식 식재료 24종 데이터 (철저한 필터링 적용)
+// 첨부 파일(PDF)에 명시된 공식 식재료 24종 데이터 (철저한 필터링 적용)[cite: 1, 2]
 const F={
   계란:[25,'냉장'],우유:[10,'냉장'],두부:[10,'냉장'],김치:[90,'냉장'],대파:[14,'냉장'],
   당근:[21,'냉장'],양배추:[14,'냉장'],애호박:[7,'냉장'],버섯:[7,'냉장'],시금치:[4,'냉장'],
@@ -229,7 +226,7 @@ const R=[
 {n:'계란 라면',t:10,i:['라면','계란'],o:['대파'],s:['물이 끓으면 면과 스프를 넣어요.','대파를 넣고 면이 익을 때까지 끓여요.','계란을 풀어 넣고 불을 꺼요.']}
 ];
 
-const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:[cite: 1] '🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
+const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
 const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
 const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
 
@@ -251,7 +248,7 @@ const save=()=>{try{localStorage.setItem('fridge',JSON.stringify(items))}catch(e
 let tt;
 function toast(h){const t=$('#toast');if(!t)return;t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
 
-// 파일(PDF)에 명시된 24종 식재료만 검증하여 등록[cite: 1, 2]
+// 첨부 파일(PDF)에 명시된 24종 식재료만 검증하여 등록[cite: 1, 2]
 function addFood(name){
   let cleanName = name.trim();
   if(BYSLUG[cleanName]) cleanName = BYSLUG[cleanName];
@@ -348,8 +345,7 @@ function dateBadgeCount(){
   if(c1>0){bg.hidden=false;bg.textContent=c1;}else{bg.hidden=true;}
 }
 
-// 부드러운 탭 전환 애니메이션
-const sections = document.querySelectorAll('.home > section, section[id^="p4"]');
+// 탭 전환 애니메이션
 const tabs=document.querySelectorAll('.dk button');
 tabs.forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -357,7 +353,7 @@ tabs.forEach(btn=>{
     btn.setAttribute('aria-selected','true');
     const id=btn.id;
     
-    document.querySelectorAll('main > .home > section, main > section').forEach(sec => sec.hidden = true);
+    document.querySelectorAll('.home > section, #p4').forEach(sec => sec.hidden = true);
     if(id==='d1') { $('#p1').hidden = false; $('#p1').classList.add('in'); }
     else if(id==='d2') { $('#p2').hidden = false; $('#p2').classList.add('in'); }
     else if(id==='d4') { $('#p4').hidden = false; $('#p4').classList.add('in'); }
