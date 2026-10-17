@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>냉장고 소비기한 노트</title>
-<!-- 고성능 바코드/QR 인식 라이브러리 -->
+<!-- 초고속 바코드/QR 인식 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
 :root{--bg:#f1f4f1;--sf:#fff;--ink:#0e1a15;--sub:#62736b;--ln:#dde5e0;--ac:#0b8a63;--acf:#fff;--ac2:#e2f3ec;--r1:#9b1c1c;--r1b:#fde8e8;--r2:#a8480a;--r2b:#fdeedb;--r3:#0b7a58;--r3b:#e0f2ea;--sh:0 1px 2px rgba(14,26,21,.05),0 14px 34px -16px rgba(14,26,21,.22);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -15,8 +15,6 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
 main{max-width:680px;margin:0 auto;padding:96px 18px 150px}
 button:focus-visible,input:focus-visible,summary:focus-visible,label.btn:focus-within{outline:3px solid var(--ac);outline-offset:2px}
-section.in{animation:in .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes in{from{opacity:0;transform:translateY(10px)}}
 .card{background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:18px;margin-bottom:18px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05)}
 .vf{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#0b1511;margin-bottom:14px;transition:box-shadow .3s;display:flex;align-items:center;justify-content:center}
 #reader{width:100%;height:100%;object-fit:cover}
@@ -47,12 +45,10 @@ ul{list-style:none;margin:0;padding:0}
 .bd{flex:1;min-width:0}.bd b{display:block;font-weight:600}.bd span{font-size:13px;color:var(--sub)}
 .dd{font-weight:700;font-size:15px;border-radius:99px;padding:4px 12px;white-space:nowrap}
 .c1 .dd{background:var(--r1b);color:var(--r1)}.c2 .dd{background:var(--r2b);color:var(--r2)}.c3 .dd{background:var(--r3b);color:var(--r3)}
-.del{border:0;background:none;color:var(--sub);cursor:pointer;font:inherit;padding:8px 6px;transition:color .2s}
-.del:hover{color:var(--r1)}
+.del{border:0;background:none;color:var(--sub);cursor:pointer;font:inherit;padding:8px 6px}
 .empty{text-align:center;color:var(--sub);padding:28px 8px}
 .bar select{width:100%;font:inherit;color:var(--ink);background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px;margin-bottom:14px}
-.rc{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .25s}
-.rc:hover{transform:translateY(-2px)}
+.rc{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.05)}
 .rc h3{margin:0;font-size:19px;letter-spacing:-.02em}
 .meta{font-size:14px;color:var(--sub);margin:2px 0 8px}
 .prog{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin:8px 0}
@@ -61,8 +57,7 @@ ul{list-style:none;margin:0;padding:0}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .tg{font-size:14px;padding:2px 11px;border-radius:99px;border:1px solid var(--ln)}
 .tg.have{background:var(--r3b);color:var(--r3);border-color:transparent}.tg.soon{background:var(--r2b);color:var(--r2);border-color:transparent}.tg.miss{color:var(--sub);border-style:dashed}
-summary{cursor:pointer;color:var(--ac);padding:6px 0;transition:opacity .2s}
-summary:hover{opacity:0.8}
+summary{cursor:pointer;color:var(--ac);padding:6px 0}
 ol{margin:6px 0 0;padding-left:22px}
 .tw{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(108px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20}
 .toast{display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:99px;box-shadow:0 18px 40px -12px rgba(0,0,0,.45);opacity:0;transform:translateY(24px) scale(.96);transition:opacity .4s,transform .5s cubic-bezier(.2,.9,.3,1.1)}
@@ -102,6 +97,8 @@ input{user-select:text;-webkit-user-select:text}
 .sw{width:58px;height:34px;border-radius:99px;border:0;background:var(--ln);position:relative;cursor:pointer;flex:none;transition:background .3s}
 .sw i{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .4s cubic-bezier(.2,.9,.3,1.2)}
 .sw[aria-checked="true"]{background:var(--ac)}.sw[aria-checked="true"] i{transform:translateX(24px)}
+
+@media(max-width:560px){.sb .r .chip:last-child{display:none}.sb{padding-left:14px;padding-right:14px}.dk button{min-width:64px;padding:9px 8px}}
 </style>
 </head>
 <body>
@@ -109,7 +106,7 @@ input{user-select:text;-webkit-user-select:text}
 <header class="sb noprint"><div class="l"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v1.5M9.5 13v3"/></svg><span id="fn">우리집 냉장고</span></div><div class="ck"><span id="ck">--:--</span><span id="dt"></span></div><div class="r"><span class="chip">냉장 <b>3°C</b></span><span class="chip">냉동 <b>-18°C</b></span></div></header>
 
 <div class="home noprint">
-<section id="p1" class="in">
+<section id="p1">
   <div class="card" id="scan">
     <div class="vf" id="vf">
       <div id="reader"></div>
@@ -184,7 +181,7 @@ const R=[
 {n:'계란 라면',t:10,i:['라면','계란'],o:['대파'],s:['물이 끓으면 면과 스프를 넣어요.','대파를 넣고 면이 익을 때까지 끓여요.','계란을 풀어 넣고 불을 꺼요.']}
 ];
 
-const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박: '🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
+const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
 const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
 const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
 
@@ -308,11 +305,9 @@ tabs.forEach(btn=>{
     tabs.forEach(b=>b.setAttribute('aria-selected','false'));
     btn.setAttribute('aria-selected','true');
     const id=btn.id;
-    
-    document.querySelectorAll('.home > section, #p4').forEach(sec => sec.hidden = true);
-    if(id==='d1') { $('#p1').hidden = false; $('#p1'].classList.add('in'); }
-    else if(id==='d2') { $('#p2').hidden = false; $('#p2'].classList.add('in'); }
-    else if(id==='d4') { $('#p4').hidden = false; $('#p4'].classList.add('in'); }
+    if($('#p1')) $('#p1').hidden=(id!=='d1');
+    if($('#p2')) $('#p2').hidden=(id!=='d2');
+    if($('#p4')) $('#p4').hidden=(id!=='d4');
   });
 });
 
