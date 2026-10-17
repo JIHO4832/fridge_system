@@ -105,7 +105,7 @@ main{padding:96px 18px 150px}
 .dk button{position:relative;display:grid;justify-items:center;gap:2px;min-width:78px;padding:9px 12px;border:0;border-radius:22px;background:none;color:var(--sub);font:inherit;font-size:12.5px;cursor:pointer;transition:background .35s,color .35s,transform .2s}
 .dk button[aria-selected="true"]{background:var(--ac2);color:var(--ac)}.dk button:active{transform:scale(.94)}
 .dk svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.badge{position:absolute;top:3px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#e5484d;color:#fff;font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center}
+.badge{position:absolute;top:3px;right:14px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e5484d;color:#fff;font-size:11px;font-weight:700;font-style:normal;display:grid;place-items:center}
 .tw{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))}
 .sec2{font-weight:500;margin-bottom:12px}
 .sws{display:flex;gap:16px;flex-wrap:wrap}
@@ -464,7 +464,7 @@ const R=[
 {n:'계란 라면',t:10,i:['라면','계란'],o:['대파'],s:['물이 끓으면 면과 스프를 넣어요.','대파를 넣고 면이 익을 때까지 끓여요.','계란을 풀어 넣고 불을 꺼요.']}
 ];
 
-const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
+const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:[🍗],베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
 const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
 const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
 
@@ -590,7 +590,7 @@ tabs.forEach(btn=>{
   });
 });
 
-// 카메라 바코드 스캔 시스템
+// 카메라 바코드 스캔 시스템 (안정화 완료)
 const vd=$('#vd'),vf=$('#vf'),st=$('#st');
 let camTimer=null;
 async function startCam(){
@@ -614,14 +614,24 @@ function stopCam(){
 function scanLoop(){
   if(!scanning||!vd)return;
   try{
-    const canvas=document.createElement('canvas');canvas.width=vd.videoWidth||640;canvas.height=vd.videoHeight||480;
-    const ctx=canvas.getContext('2d');ctx.drawImage(vd,0,0,canvas.width,canvas.height);
-    const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
-    const res=qrDecode(imgData.data,canvas.width,canvas.height);
-    if(res){
-      let name=res.trim();
-      if(BYSLUG[name]) name=BYSLUG[name];
-      if(F[name]){addFood(name);stopCam();setTimeout(startCam,2000);return;}
+    if(vd.videoWidth > 0 && vd.videoHeight > 0){
+      const canvas=document.createElement('canvas');
+      canvas.width=vd.videoWidth; 
+      canvas.height=vd.videoHeight;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(vd,0,0,canvas.width,canvas.height);
+      const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+      const res=qrDecode(imgData.data,canvas.width,canvas.height);
+      if(res){
+        let name=res.trim();
+        if(BYSLUG[name]) name=BYSLUG[name];
+        if(F[name]){
+          addFood(name);
+          stopCam();
+          setTimeout(startCam,2000);
+          return;
+        }
+      }
     }
   }catch(e){}
   camTimer=setTimeout(scanLoop,300);
@@ -645,7 +655,7 @@ if($('#img')) $('#img').onchange=e=>{
   img.src=url;
 };
 
-// --- 상단 헤더 시계 및 테마/설정 기능 복구 ---
+// --- 상단 헤더 시계 및 테마/설정 기능 ---
 function updateClock(){
     const now = new Date();
     const ck=$('#ck'), dt=$('#dt');
@@ -655,7 +665,6 @@ function updateClock(){
 setInterval(updateClock, 1000);
 updateClock();
 
-// 냉장고 이름 변경
 const fnSpan=$('#fn'), snInput=$('#sn');
 if(snInput && fnSpan){
     snInput.value = localStorage.getItem('fridgeName') || '우리집 냉장고';
@@ -666,7 +675,6 @@ if(snInput && fnSpan){
     };
 }
 
-// 테마 스와치 및 다크모드 설정
 const THEMES = [
   {id:'g', c:'#0b8a63', ac2:'#e2f3ec'},
   {id:'b', c:'#2563eb', ac2:'#eff6ff'},
@@ -689,7 +697,6 @@ if(sws){
     };
 }
 
-// 화면 모드 (자동 / 라이트 / 다크)
 const seg=$('#seg');
 if(seg){
     const mode = localStorage.getItem('fridgeMode') || 'auto';
@@ -705,7 +712,6 @@ if(seg){
     });
 }
 
-// 화면 항상 켜두기 (WakeLock)
 const wk=$('#wk');
 if(wk){
     wk.onclick = async () => {
@@ -724,7 +730,6 @@ if(wk){
     };
 }
 
-// 초기화
 if($('#rs')) $('#rs').onclick=()=>{if(confirm('모든 식재료를 삭제하시겠어요?')){items=[];save();render();toast('전체 삭제되었습니다.');}};
 
 // --- 제미나이 AI 음성 비서 기능 연동 ---
