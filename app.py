@@ -24,15 +24,13 @@ def ai_assistant():
         return jsonify({"reply": "Gemini API 키가 설정되지 않았습니다. Render 환경 변수(GEMINI_API_KEY)를 확인해 주세요."})
 
     try:
-        # gemini-1.5-flash 모델 사용 (존재하지 않는 gemini-3.8 대신 안정적인 최신 모델 사용)
         model = genai.GenerativeModel('gemini-1.5-flash')
-        prompt = f"너는 스마트 냉장고의 친절한 AI 음성 비서야. 사용자의 다음 질문이나 명령에 짧고 명확하게 한국어로 2-3문장 이내로 답변해줘: {user_message}"
+        prompt = f"너는 스마트 냉장고의 친절한 AI 음성 비서야. 사용자의 다음 질문이나 명령에 짧고 명확하게 한국어로 답변해줘: {user_message}"
         response = model.generate_content(prompt)
         
         reply_text = response.text if response and response.text else "답변을 생성하지 못했습니다."
         return jsonify({"reply": reply_text})
     except Exception as e:
-        print("Gemini API Error:", str(e))
         return jsonify({"reply": f"Gemini 통신 에러가 발생했습니다: {str(e)}"}), 500
 
 if __name__ == "__main__":
