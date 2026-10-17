@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>fridge_system</title>
+<title>냉장고 소비기한 노트</title>
 <!-- 고성능 바코드/QR 인식 라이브러리 -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
@@ -121,7 +121,7 @@ input{user-select:text;-webkit-user-select:text}
       <label class="btn ghost" for="img">사진으로 인식</label>
       <input id="img" type="file" accept="image/*" hidden>
     </div>
-    <p class="hint" id="st">첨부 파일에 명시된 24종 식재료 바코드/QR 코드를 비추면 자동 등록됩니다.</p>
+    <p class="hint" id="st">식재료 바코드/QR 코드를 비추면 자동 등록됩니다.</p>
   </div>
   <details class="card"><summary>직접 추가하기</summary>
     <div class="form">
@@ -157,7 +157,7 @@ input{user-select:text;-webkit-user-select:text}
 <div class="tw"><div class="toast" id="toast" role="status"></div></div>
 
 <script>
-// 첨부 파일(PDF)에 명시된 공식 식재료 24종 데이터 (철저한 필터링 적용)
+// 24종 식재료 및 소비기한 데이터
 const F={
   계란:[25,'냉장'],우유:[10,'냉장'],두부:[10,'냉장'],김치:[90,'냉장'],대파:[14,'냉장'],
   당근:[21,'냉장'],양배추:[14,'냉장'],애호박:[7,'냉장'],버섯:[7,'냉장'],시금치:[4,'냉장'],
@@ -184,7 +184,7 @@ const R=[
 {n:'계란 라면',t:10,i:['라면','계란'],o:['대파'],s:['물이 끓으면 면과 스프를 넣어요.','대파를 넣고 면이 익을 때까지 끓여요.','계란을 풀어 넣고 불을 꺼요.']}
 ];
 
-const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박:'🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
+const EMO={계란:'🥚',우유:'🥛',두부:'⬜',김치:'🥬',대파:'🌿',당근:'🥕',양배추:'🥬',애호박: '🥒',버섯:'🍄',시금치:'🥬',돼지고기:'🥩',소고기:'🥩',닭고기:'🍗',베이컨:'🥓',어묵:'🍢',치즈:'🧀',양파:'🧅',감자:'🥔',마늘:'🧄',식빵:'🍞',참치캔:'🐟',라면:'🍜',파스타면:'🍝',밥:'🍚'};
 const SLUG={계란:'egg',우유:'milk',두부:'tofu',김치:'kimchi',대파:'scallion',당근:'carrot',양배추:'cabbage',애호박:'zucchini',버섯:'mushroom',시금치:'spinach',돼지고기:'pork',소고기:'beef',닭고기:'chicken',베이컨:'bacon',어묵:'fishcake',치즈:'cheese',양파:'onion',감자:'potato',마늘:'garlic',식빵:'bread',참치캔:'tuna',라면:'ramen',파스타면:'pasta',밥:'rice'};
 const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
 
@@ -206,7 +206,6 @@ const save=()=>{try{localStorage.setItem('fridge',JSON.stringify(items))}catch(e
 let tt;
 function toast(h){const t=$('#toast');if(!t)return;t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
 
-// 파일(PDF)에 명시된 24종 식재료만 검증하여 등록
 function addFood(name){
   let cleanName = name.trim();
   if(BYSLUG[cleanName]) cleanName = BYSLUG[cleanName];
@@ -303,7 +302,6 @@ function dateBadgeCount(){
   if(c1>0){bg.hidden=false;bg.textContent=c1;}else{bg.hidden=true;}
 }
 
-// 탭 전환 애니메이션
 const tabs=document.querySelectorAll('.dk button');
 tabs.forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -312,13 +310,12 @@ tabs.forEach(btn=>{
     const id=btn.id;
     
     document.querySelectorAll('.home > section, #p4').forEach(sec => sec.hidden = true);
-    if(id==='d1') { $('#p1').hidden = false; $('#p1').classList.add('in'); }
-    else if(id==='d2') { $('#p2').hidden = false; $('#p2').classList.add('in'); }
-    else if(id==='d4') { $('#p4').hidden = false; $('#p4').classList.add('in'); }
+    if(id==='d1') { $('#p1').hidden = false; $('#p1'].classList.add('in'); }
+    else if(id==='d2') { $('#p2').hidden = false; $('#p2'].classList.add('in'); }
+    else if(id==='d4') { $('#p4').hidden = false; $('#p4'].classList.add('in'); }
   });
 });
 
-// 고성능 바코드 & QR 스캐너 연동
 let html5QrCode = null;
 let currentCameraMode = "environment";
 let isScanning = false;
@@ -384,7 +381,6 @@ $('#img').onchange = e => {
     .catch(() => toast("바코드/QR 코드를 찾을 수 없습니다."));
 };
 
-// 실시간 시계
 function updateClock(){
     const now = new Date();
     const ck=$('#ck'), dt=$('#dt');
@@ -404,7 +400,6 @@ if(snInput && fnSpan){
     };
 }
 
-// 색상 테마 시스템
 const THEMES = [
   {id:'g', c:'#0b8a63', ac2:'#e2f3ec'},
   {id:'b', c:'#2563eb', ac2:'#eff6ff'},
@@ -427,7 +422,6 @@ if(sws){
     };
 }
 
-// 다크/라이트 모드 설정
 const seg=$('#seg');
 if(seg){
     const mode = localStorage.getItem('fridgeMode') || 'auto';
@@ -443,7 +437,6 @@ if(seg){
     });
 }
 
-// 화면 항상 켜두기 (Wake Lock)
 const wk=$('#wk');
 if(wk){
     wk.onclick = async () => {
